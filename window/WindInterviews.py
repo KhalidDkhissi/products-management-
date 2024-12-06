@@ -1,0 +1,215 @@
+from PyQt5.QtWidgets import QDialog, QLabel, QFormLayout, QLineEdit, QWidget, QVBoxLayout, QHBoxLayout, QDateEdit
+from PyQt5.QtCore import Qt, QDate
+
+from controllers.window.WindInterviewsController import WindInterviewsController
+from config.Font import Font
+from config.Static import Static
+from components.ComboBox import ComboBox
+from components.Button import Button
+
+class WindInterviews(QDialog):
+    def __init__(self, db, data, action):
+        super().__init__()
+        
+        self._db_ = db
+        self._data_ = data
+        self._action_ = action
+
+        self._controller_ = WindInterviewsController(this=self)
+        self._static_ = Static()
+        self._font_ = Font()
+
+        self.state = False
+
+        self.init_ui()
+
+    def init_ui(self):
+        self.setFixedWidth(400)
+
+        if self._action_ == "new":
+            title = QLabel("Add new interview")
+            btn = Button(name="Add New", style="success")
+            btn.clicked.connect(self.create_interview)
+        else:
+            title = QLabel("Edit interview")
+            btn = Button(name="Edit", style="primary")
+            btn.clicked.connect(self.update_interview)
+
+        title.setFont(self._font_.setFont(13, 400))
+        title.setStyleSheet("text-align: center; width: 100%")
+
+        self.form = QFormLayout()
+
+        ctn_1 = QWidget()
+        hbox_1 = QHBoxLayout()
+        hbox_1.setContentsMargins(0,0,0,0)
+
+        box_1 = QWidget()
+        vbox_1 = QVBoxLayout()
+        vbox_1.setContentsMargins(0,0,0,0)
+
+        label_candidate_name = QLabel("Candidate name:")
+        label_candidate_name.setFont(self._font_.setFont(10, 400))
+        
+        self.candidate_name = ComboBox()
+        self.candidate_name.setFixedHeight(33)
+        self.candidate_name.setObjectName("candidate_name")
+
+        vbox_1.addWidget(label_candidate_name)
+        vbox_1.addWidget(self.candidate_name)
+
+        box_1.setLayout(vbox_1)
+
+        box_2 = QWidget()
+        vbox_2 = QVBoxLayout()
+        vbox_2.setContentsMargins(0,0,0,0)
+        
+        label_job_posting = QLabel("Job posting:")
+        label_job_posting.setFont(self._font_.setFont(10, 400))
+
+        self.job_posting = ComboBox()
+        self.job_posting.setFixedHeight(33)
+        self.job_posting.setObjectName("job_posting")
+
+        vbox_2.addWidget(label_job_posting)
+        vbox_2.addWidget(self.job_posting)
+
+        box_2.setLayout(vbox_2)
+
+        hbox_1.addWidget(box_1)
+        hbox_1.addWidget(box_2)
+
+        ctn_1.setLayout(hbox_1)
+
+        ctn_2 = QWidget()
+        hbox_2 = QHBoxLayout()
+        hbox_2.setContentsMargins(0,0,0,0)
+
+        box_3 = QWidget()
+        vbox_3 = QVBoxLayout()
+        vbox_3.setContentsMargins(0,0,0,0)
+
+        label_interview_date = QLabel("Interview date:")
+        label_interview_date.setFont(self._font_.setFont(10, 400))
+        
+        self.interview_date = QDateEdit()
+        self.interview_date.setCalendarPopup(True)
+        self.interview_date.setDate(QDate.currentDate())
+        self.interview_date.setFixedHeight(33)
+        self.interview_date.setObjectName("interview_date")
+
+        vbox_3.addWidget(label_interview_date)
+        vbox_3.addWidget(self.interview_date)
+
+        box_3.setLayout(vbox_3)
+
+        box_4 = QWidget()
+        vbox_4 = QVBoxLayout()
+        vbox_4.setContentsMargins(0,0,0,0)
+        
+        label_status = QLabel("status:")
+        label_status.setFont(self._font_.setFont(10, 400))
+        
+        self.status = ComboBox(self._static_.get("status_interviews"))
+        self.status.setFixedHeight(33)
+        self.status.setObjectName("status")
+
+        vbox_4.addWidget(label_status)
+        vbox_4.addWidget(self.status)
+
+        box_4.setLayout(vbox_4)
+
+        hbox_2.addWidget(box_3)
+        hbox_2.addWidget(box_4)
+
+        ctn_2.setLayout(hbox_2)
+        
+
+
+        ctn_3 = QWidget()
+        hbox_3 = QHBoxLayout()
+        hbox_3.setContentsMargins(0,0,0,0)
+
+        box_5 = QWidget()
+        vbox_5 = QVBoxLayout()
+        vbox_5.setContentsMargins(0,0,0,0)
+
+        label_notes = QLabel("notes:")
+        label_notes.setFont(self._font_.setFont(10, 400))
+        
+        self.notes = QLineEdit(self)
+        self.notes.setFixedHeight(33)
+        self.notes.setObjectName("notes")
+
+        vbox_5.addWidget(label_notes)
+        vbox_5.addWidget(self.notes)
+
+        box_5.setLayout(vbox_5)
+        hbox_3.addWidget(box_5)
+        
+        box_6 = QWidget()
+        vbox_6 = QVBoxLayout()
+        vbox_6.setContentsMargins(0,0,0,0)
+
+        label_interviewer = QLabel("Interviewer:")
+        label_interviewer.setFont(self._font_.setFont(10, 400))
+
+        self.interviewer = QLineEdit()
+        self.interviewer.setFixedHeight(33)
+        self.interviewer.setObjectName("interviewer")
+
+
+        vbox_6.addWidget(label_interviewer)
+        vbox_6.addWidget(self.interviewer)
+
+        box_6.setLayout(vbox_6)
+
+        hbox_3.addWidget(box_5)
+        hbox_3.addWidget(box_6)
+        
+        ctn_3.setLayout(hbox_3)
+
+
+        ctn_5 = QWidget()
+        hbox_5 = QHBoxLayout()
+        hbox_5.setContentsMargins(0,10,0,10)
+        
+        btn.setFixedWidth(self.width() - 20) 
+        hbox_5.addWidget(btn)
+
+        ctn_5.setLayout(hbox_5)
+        
+        ctn_6 = QWidget()
+        hbox_6 = QHBoxLayout()
+        hbox_6.setContentsMargins(0,10,0,10)
+        
+        hbox_6.addWidget(title, alignment=Qt.AlignCenter)
+
+        ctn_6.setLayout(hbox_6)
+
+        self.form.addRow(ctn_6)
+        self.form.addRow(ctn_1)
+        self.form.addRow(ctn_2)
+        self.form.addRow(ctn_3)
+        self.form.addRow(ctn_5)
+
+        self.form.setContentsMargins(10,0,10,0)
+
+        self.setLayout(self.form)
+
+        self.set_combo_items()
+
+        if self._data_ is not None:
+            self.set_data()
+        
+    def create_interview(self):
+        self._controller_.create_interview()
+
+    def update_interview(self):
+        self._controller_.update_interview(self._data_)
+
+    def set_data(self):
+        self._controller_.set_data(self._data_)
+
+    def set_combo_items(self):
+        self._controller_.set_combo_items()
